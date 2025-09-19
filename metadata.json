@@ -1,0 +1,5 @@
+{
+  "name": "Badminton Tournament Manager",
+  "description": "A comprehensive web app for managing badminton tournaments, featuring customizable scoring, an umpire-friendly interface, and dynamic leaderboards.",
+  "requestFramePermissions": []
+}
