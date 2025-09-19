@@ -27,7 +27,7 @@ export interface Player {
   id: string;
   name: string;
   age?: number;
-  dominantHand: DominantHand;
+  dominantHand?: DominantHand;
   contact?: string;
 }
 
@@ -61,6 +61,8 @@ export interface LeaderboardEntry {
   teamId: string;
   teamName: string;
   category: Category;
+  groupId?: string;
+  groupName?: string;
   played: number;
   wins: number;
   losses: number;

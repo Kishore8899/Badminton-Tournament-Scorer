@@ -16,11 +16,14 @@ interface TournamentContextType {
   addTeam: (team: Omit<Team, 'id'>) => Promise<void>;
   removeTeam: (teamId: string) => Promise<void>;
   createGroup: (name: string) => Promise<void>;
+  removeGroup: (groupId: string) => Promise<void>;
   assignTeamToGroup: (team: Team, groupId: string) => Promise<void>;
+  unassignTeamFromGroup: (teamId: string) => Promise<void>;
   autoAssignGroups: (numGroups: number) => Promise<void>;
   generateFixtures: () => Promise<void>;
-  updateScore: (matchId: string, teamKey: 'teamA' | 'teamB', points: number) => Promise<void>;
+  setScore: (matchId: string, teamKey: 'teamA' | 'teamB', score: number) => Promise<void>;
   endMatch: (matchId: string, winner: Team) => Promise<void>;
+  reopenMatch: (matchId: string) => Promise<void>;
   resetTournament: () => void;
 }
 
@@ -89,6 +92,12 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setGroups(updatedGroups);
   }, [groups]);
 
+  const removeGroup = useCallback(async (groupId: string) => {
+    const newGroups = groups.filter(g => g.id !== groupId);
+    const updatedGroups = await api.updateGroups(newGroups);
+    setGroups(updatedGroups);
+  }, [groups]);
+
   const assignTeamToGroup = useCallback(async (team: Team, groupId: string) => {
     const newGroups = groups.map(group => {
       const filteredTeams = group.teams.filter(t => t.id !== team.id);
@@ -97,6 +106,15 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
       }
       return { ...group, teams: filteredTeams };
     });
+    const updatedGroups = await api.updateGroups(newGroups);
+    setGroups(updatedGroups);
+  }, [groups]);
+
+  const unassignTeamFromGroup = useCallback(async (teamId: string) => {
+    const newGroups = groups.map(group => ({
+      ...group,
+      teams: group.teams.filter(t => t.id !== teamId)
+    }));
     const updatedGroups = await api.updateGroups(newGroups);
     setGroups(updatedGroups);
   }, [groups]);
@@ -120,8 +138,8 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setMatches(newMatches);
   }, []);
 
-  const updateScore = useCallback(async (matchId: string, teamKey: 'teamA' | 'teamB', points: number) => {
-    const updatedMatches = await api.updateMatchScore(matchId, teamKey, points);
+  const setScore = useCallback(async (matchId: string, teamKey: 'teamA' | 'teamB', score: number) => {
+    const updatedMatches = await api.setMatchScore(matchId, teamKey, score);
     setMatches(updatedMatches);
   }, []);
 
@@ -130,18 +148,36 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setMatches(updatedMatches);
   }, []);
 
+  const reopenMatch = useCallback(async (matchId: string) => {
+    const updatedMatches = await api.reopenMatch(matchId);
+    setMatches(updatedMatches);
+  }, []);
+
   const resetTournament = useCallback(() => {
     api.resetTournamentData();
     window.location.reload();
   }, []);
 
+  const teamToGroupMap = useMemo(() => {
+    const map = new Map<string, { id: string, name: string }>();
+    groups.forEach(group => {
+        group.teams.forEach(team => {
+            map.set(team.id, { id: group.id, name: group.name });
+        });
+    });
+    return map;
+  }, [groups]);
+
   const leaderboardData = useMemo<LeaderboardEntry[]>(() => {
     const stats: { [key: string]: LeaderboardEntry } = {};
     teams.forEach(team => {
+      const groupInfo = teamToGroupMap.get(team.id);
       stats[team.id] = { 
         teamId: team.id, 
         teamName: team.name, 
         category: team.category,
+        groupId: groupInfo?.id,
+        groupName: groupInfo?.name,
         played: 0, 
         wins: 0, 
         losses: 0, 
@@ -170,13 +206,13 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     return Object.values(stats).map(s => ({ ...s, pointDifference: s.pointsFor - s.pointsAgainst }));
-  }, [matches, teams]);
+  }, [matches, teams, teamToGroupMap]);
   
   const value: TournamentContextType = {
     isLoading, tournamentDetails, players, teams, groups, matches, leaderboardData,
     setTournamentDetails, addPlayer, removePlayer, addTeam, removeTeam, createGroup,
-    assignTeamToGroup, autoAssignGroups, generateFixtures, updateScore, endMatch,
-    resetTournament,
+    removeGroup, assignTeamToGroup, unassignTeamFromGroup, autoAssignGroups, generateFixtures, setScore, endMatch,
+    reopenMatch, resetTournament,
   };
 
   return React.createElement(TournamentContext.Provider, { value }, children);

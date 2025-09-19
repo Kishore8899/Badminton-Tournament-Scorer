@@ -144,14 +144,13 @@ export const api = {
     return data.matches;
   },
 
-  async updateMatchScore(matchId: string, teamKey: 'teamA' | 'teamB', points: number): Promise<Match[]> {
+  async setMatchScore(matchId: string, teamKey: 'teamA' | 'teamB', newScore: number): Promise<Match[]> {
      await sleep(50);
      const data = getInitialData();
-     // FIX: Explicitly type the return value of the map callback to `Match` to prevent type widening of the `status` property.
      const matches = data.matches.map((m): Match => {
       if (m.id === matchId && m.status !== 'completed') {
-        const newScore = Math.max(0, m.score[teamKey] + points);
-        return { ...m, status: 'in-progress', score: { ...m.score, [teamKey]: newScore } };
+        const scoreValue = Math.max(0, newScore);
+        return { ...m, status: 'in-progress', score: { ...m.score, [teamKey]: scoreValue } };
       }
       return m;
     });
@@ -163,7 +162,6 @@ export const api = {
   async completeMatch(matchId: string, winner: Team): Promise<Match[]> {
      await sleep(300);
      const data = getInitialData();
-     // FIX: Explicitly type the return value of the map callback to `Match` to prevent type widening of the `status` property.
      const matches = data.matches.map((m): Match => {
       if (m.id === matchId) {
         return { ...m, status: 'completed', winner };
@@ -173,6 +171,21 @@ export const api = {
     data.matches = matches;
     saveData(data);
     return data.matches;
+  },
+
+  async reopenMatch(matchId: string): Promise<Match[]> {
+    await sleep(300);
+    const data = getInitialData();
+    const matches = data.matches.map((m): Match => {
+     if (m.id === matchId && m.status === 'completed') {
+       const { winner, ...rest } = m;
+       return { ...rest, status: 'in-progress' };
+     }
+     return m;
+   });
+   data.matches = matches;
+   saveData(data);
+   return data.matches;
   },
 
   resetTournamentData(): void {

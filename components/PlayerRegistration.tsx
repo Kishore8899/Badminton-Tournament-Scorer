@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Card from './Card';
 import Button from './Button';
@@ -11,7 +12,7 @@ const PlayerRegistration: React.FC = () => {
   const { players, addPlayer, removePlayer } = useTournament();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  const [dominantHand, setDominantHand] = useState<DominantHand>(DominantHand.Right);
+  const [dominantHand, setDominantHand] = useState<DominantHand | ''>('');
   const [contact, setContact] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,7 +22,7 @@ const PlayerRegistration: React.FC = () => {
       setIsSubmitting(true);
       const newPlayer: Omit<Player, 'id'> = {
         name,
-        dominantHand,
+        ...(dominantHand && { dominantHand }),
         ...(age && { age: parseInt(age, 10) }),
         ...(contact && { contact }),
       };
@@ -29,7 +30,7 @@ const PlayerRegistration: React.FC = () => {
         await addPlayer(newPlayer);
         setName('');
         setAge('');
-        setDominantHand(DominantHand.Right);
+        setDominantHand('');
         setContact('');
       } catch (error) {
         console.error("Failed to add player", error);
@@ -60,12 +61,13 @@ const PlayerRegistration: React.FC = () => {
             <Input label="Age (Optional)" id="playerAge" type="number" value={age} onChange={e => setAge(e.target.value)} />
             <Input label="Contact (Optional)" id="playerContact" value={contact} onChange={e => setContact(e.target.value)} />
             <div>
-              <label className="block text-sm font-medium text-brand-light/80 mb-1">Dominant Hand</label>
+              <label className="block text-sm font-medium text-brand-light/80 mb-1">Dominant Hand (Optional)</label>
               <select 
                 value={dominantHand} 
                 onChange={e => setDominantHand(e.target.value as DominantHand)}
                 className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
               >
+                <option value="">Select Hand</option>
                 <option value={DominantHand.Right}>Right</option>
                 <option value={DominantHand.Left}>Left</option>
               </select>
@@ -97,7 +99,7 @@ const PlayerRegistration: React.FC = () => {
                   <tr key={player.id} className="bg-brand-secondary border-b border-brand-dark/50 hover:bg-brand-secondary/80">
                     <td className="px-4 py-4 sm:px-6 font-medium text-brand-light whitespace-nowrap">{player.name}</td>
                     <td className="px-4 py-4 sm:px-6">{player.age ?? 'N/A'}</td>
-                    <td className="px-4 py-4 sm:px-6">{player.dominantHand}</td>
+                    <td className="px-4 py-4 sm:px-6">{player.dominantHand ?? 'N/A'}</td>
                     <td className="px-4 py-4 sm:px-6">
                       <Button variant="danger" onClick={() => handleRemove(player.id)} className="px-2 py-1">
                         <TrashIcon className="w-4 h-4" />
