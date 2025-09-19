@@ -158,45 +158,58 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     window.location.reload();
   }, []);
 
-  const teamToGroupMap = useMemo(() => {
-    const map = new Map<string, { id: string, name: string }>();
-    groups.forEach(group => {
-        group.teams.forEach(team => {
-            map.set(team.id, { id: group.id, name: group.name });
-        });
-    });
-    return map;
-  }, [groups]);
-
   const leaderboardData = useMemo<LeaderboardEntry[]>(() => {
     const stats: { [key: string]: LeaderboardEntry } = {};
-    teams.forEach(team => {
-      const groupInfo = teamToGroupMap.get(team.id);
-      stats[team.id] = { 
-        teamId: team.id, 
-        teamName: team.name, 
-        category: team.category,
-        groupId: groupInfo?.id,
-        groupName: groupInfo?.name,
-        played: 0, 
-        wins: 0, 
-        losses: 0, 
-        pointsFor: 0, 
-        pointsAgainst: 0, 
-        pointDifference: 0, 
-        gamesWon: 0 
-      };
+
+    // Initialize stats from teams that are in groups.
+    // This directly ties a team to its group info.
+    groups.forEach(group => {
+      group.teams.forEach(team => {
+        stats[team.id] = {
+          teamId: team.id,
+          teamName: team.name,
+          category: team.category,
+          groupId: group.id,
+          groupName: group.name,
+          played: 0,
+          wins: 0,
+          losses: 0,
+          pointsFor: 0,
+          pointsAgainst: 0,
+          pointDifference: 0,
+          gamesWon: 0,
+        };
+      });
     });
+
+    // Add any remaining ungrouped teams to the stats.
+    const groupedTeamIds = new Set(Object.keys(stats));
+    teams.forEach(team => {
+      if (!groupedTeamIds.has(team.id)) {
+        stats[team.id] = {
+          teamId: team.id,
+          teamName: team.name,
+          category: team.category,
+          groupId: undefined,
+          groupName: undefined,
+          played: 0, wins: 0, losses: 0, pointsFor: 0, pointsAgainst: 0, pointDifference: 0, gamesWon: 0
+        };
+      }
+    });
+    
+    // Update stats based on completed matches.
     matches.filter(m => m.status === 'completed').forEach(match => {
       const teamAStats = stats[match.teamA.id];
       const teamBStats = stats[match.teamB.id];
       if (!teamAStats || !teamBStats) return;
+      
       teamAStats.played++;
       teamBStats.played++;
       teamAStats.pointsFor += match.score.teamA;
       teamAStats.pointsAgainst += match.score.teamB;
       teamBStats.pointsFor += match.score.teamB;
       teamBStats.pointsAgainst += match.score.teamA;
+      
       if (match.winner?.id === match.teamA.id) {
         teamAStats.wins++;
         teamBStats.losses++;
@@ -205,8 +218,9 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
         teamAStats.losses++;
       }
     });
+    
     return Object.values(stats).map(s => ({ ...s, pointDifference: s.pointsFor - s.pointsAgainst }));
-  }, [matches, teams, teamToGroupMap]);
+  }, [matches, teams, groups]);
   
   const value: TournamentContextType = {
     isLoading, tournamentDetails, players, teams, groups, matches, leaderboardData,
