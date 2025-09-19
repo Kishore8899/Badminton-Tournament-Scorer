@@ -3,9 +3,11 @@ import Card from './Card';
 import Button from './Button';
 import { useTournament } from '../hooks/useTournament';
 import { Team } from '../types';
+import { TrashIcon } from './icons/TrashIcon';
+import { XCircleIcon } from './icons/XCircleIcon';
 
 const GroupDivision: React.FC = () => {
-  const { teams, groups, assignTeamToGroup, createGroup, autoAssignGroups } = useTournament();
+  const { teams, groups, assignTeamToGroup, createGroup, autoAssignGroups, removeGroup, unassignTeamFromGroup } = useTournament();
   const [isAutoAssigning, setIsAutoAssigning] = useState(false);
   const [isAddingGroup, setIsAddingGroup] = useState(false);
 
@@ -30,6 +32,12 @@ const GroupDivision: React.FC = () => {
     setIsAddingGroup(true);
     await createGroup(`Group ${String.fromCharCode(65 + groups.length)}`);
     setIsAddingGroup(false);
+  }
+
+  const handleRemoveGroup = (groupId: string) => {
+    if (window.confirm('Are you sure you want to delete this group? All teams within it will become ungrouped.')) {
+        removeGroup(groupId);
+    }
   }
   
   return (
@@ -58,12 +66,22 @@ const GroupDivision: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {groups.map(group => (
-          <Card key={group.id} title={group.name}>
+          <Card 
+            key={group.id} 
+            title={group.name}
+            actions={
+                <Button variant="danger" onClick={() => handleRemoveGroup(group.id)} className="px-2 py-1">
+                    <TrashIcon className="w-4 h-4" />
+                </Button>
+            }
+          >
             <div className="space-y-3 min-h-[100px]">
               {group.teams.map(team => (
                 <div key={team.id} className="flex justify-between items-center bg-brand-dark p-2 rounded-md">
                   <span className="text-brand-light font-semibold">{team.name}</span>
-                  <span className="text-xs text-gray-400">{team.category}</span>
+                  <button onClick={() => unassignTeamFromGroup(team.id)} className="text-gray-500 hover:text-red-400 transition-colors">
+                    <XCircleIcon className="w-5 h-5" />
+                  </button>
                 </div>
               ))}
                {group.teams.length === 0 && <p className="text-center text-gray-500 pt-4">This group is empty.</p>}

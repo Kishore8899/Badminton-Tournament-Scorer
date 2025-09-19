@@ -16,7 +16,9 @@ interface TournamentContextType {
   addTeam: (team: Omit<Team, 'id'>) => Promise<void>;
   removeTeam: (teamId: string) => Promise<void>;
   createGroup: (name: string) => Promise<void>;
+  removeGroup: (groupId: string) => Promise<void>;
   assignTeamToGroup: (team: Team, groupId: string) => Promise<void>;
+  unassignTeamFromGroup: (teamId: string) => Promise<void>;
   autoAssignGroups: (numGroups: number) => Promise<void>;
   generateFixtures: () => Promise<void>;
   setScore: (matchId: string, teamKey: 'teamA' | 'teamB', score: number) => Promise<void>;
@@ -90,6 +92,12 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setGroups(updatedGroups);
   }, [groups]);
 
+  const removeGroup = useCallback(async (groupId: string) => {
+    const newGroups = groups.filter(g => g.id !== groupId);
+    const updatedGroups = await api.updateGroups(newGroups);
+    setGroups(updatedGroups);
+  }, [groups]);
+
   const assignTeamToGroup = useCallback(async (team: Team, groupId: string) => {
     const newGroups = groups.map(group => {
       const filteredTeams = group.teams.filter(t => t.id !== team.id);
@@ -98,6 +106,15 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
       }
       return { ...group, teams: filteredTeams };
     });
+    const updatedGroups = await api.updateGroups(newGroups);
+    setGroups(updatedGroups);
+  }, [groups]);
+
+  const unassignTeamFromGroup = useCallback(async (teamId: string) => {
+    const newGroups = groups.map(group => ({
+      ...group,
+      teams: group.teams.filter(t => t.id !== teamId)
+    }));
     const updatedGroups = await api.updateGroups(newGroups);
     setGroups(updatedGroups);
   }, [groups]);
@@ -194,7 +211,7 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
   const value: TournamentContextType = {
     isLoading, tournamentDetails, players, teams, groups, matches, leaderboardData,
     setTournamentDetails, addPlayer, removePlayer, addTeam, removeTeam, createGroup,
-    assignTeamToGroup, autoAssignGroups, generateFixtures, setScore, endMatch,
+    removeGroup, assignTeamToGroup, unassignTeamFromGroup, autoAssignGroups, generateFixtures, setScore, endMatch,
     reopenMatch, resetTournament,
   };
 
