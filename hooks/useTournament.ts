@@ -19,8 +19,9 @@ interface TournamentContextType {
   assignTeamToGroup: (team: Team, groupId: string) => Promise<void>;
   autoAssignGroups: (numGroups: number) => Promise<void>;
   generateFixtures: () => Promise<void>;
-  updateScore: (matchId: string, teamKey: 'teamA' | 'teamB', points: number) => Promise<void>;
+  setScore: (matchId: string, teamKey: 'teamA' | 'teamB', score: number) => Promise<void>;
   endMatch: (matchId: string, winner: Team) => Promise<void>;
+  reopenMatch: (matchId: string) => Promise<void>;
   resetTournament: () => void;
 }
 
@@ -120,8 +121,8 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setMatches(newMatches);
   }, []);
 
-  const updateScore = useCallback(async (matchId: string, teamKey: 'teamA' | 'teamB', points: number) => {
-    const updatedMatches = await api.updateMatchScore(matchId, teamKey, points);
+  const setScore = useCallback(async (matchId: string, teamKey: 'teamA' | 'teamB', score: number) => {
+    const updatedMatches = await api.setMatchScore(matchId, teamKey, score);
     setMatches(updatedMatches);
   }, []);
 
@@ -130,18 +131,36 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setMatches(updatedMatches);
   }, []);
 
+  const reopenMatch = useCallback(async (matchId: string) => {
+    const updatedMatches = await api.reopenMatch(matchId);
+    setMatches(updatedMatches);
+  }, []);
+
   const resetTournament = useCallback(() => {
     api.resetTournamentData();
     window.location.reload();
   }, []);
 
+  const teamToGroupMap = useMemo(() => {
+    const map = new Map<string, { id: string, name: string }>();
+    groups.forEach(group => {
+        group.teams.forEach(team => {
+            map.set(team.id, { id: group.id, name: group.name });
+        });
+    });
+    return map;
+  }, [groups]);
+
   const leaderboardData = useMemo<LeaderboardEntry[]>(() => {
     const stats: { [key: string]: LeaderboardEntry } = {};
     teams.forEach(team => {
+      const groupInfo = teamToGroupMap.get(team.id);
       stats[team.id] = { 
         teamId: team.id, 
         teamName: team.name, 
         category: team.category,
+        groupId: groupInfo?.id,
+        groupName: groupInfo?.name,
         played: 0, 
         wins: 0, 
         losses: 0, 
@@ -170,13 +189,13 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     return Object.values(stats).map(s => ({ ...s, pointDifference: s.pointsFor - s.pointsAgainst }));
-  }, [matches, teams]);
+  }, [matches, teams, teamToGroupMap]);
   
   const value: TournamentContextType = {
     isLoading, tournamentDetails, players, teams, groups, matches, leaderboardData,
     setTournamentDetails, addPlayer, removePlayer, addTeam, removeTeam, createGroup,
-    assignTeamToGroup, autoAssignGroups, generateFixtures, updateScore, endMatch,
-    resetTournament,
+    assignTeamToGroup, autoAssignGroups, generateFixtures, setScore, endMatch,
+    reopenMatch, resetTournament,
   };
 
   return React.createElement(TournamentContext.Provider, { value }, children);

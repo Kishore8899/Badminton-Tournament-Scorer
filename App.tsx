@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Tabs from './components/Tabs';
@@ -6,7 +7,7 @@ import PlayerRegistration from './components/PlayerRegistration';
 import TeamManagement from './components/TeamManagement';
 import GroupDivision from './components/GroupDivision';
 import Fixtures from './components/Fixtures';
-import UmpireView from './components/UmpireView';
+import UmpireView, { MatchSelector } from './components/UmpireView';
 import Leaderboard from './components/Leaderboard';
 import { useTournament } from './hooks/useTournament';
 import { ShuttlecockIcon } from './components/icons/ShuttlecockIcon';
@@ -15,6 +16,7 @@ type Tab = 'Setup' | 'Players' | 'Teams' | 'Groups' | 'Fixtures' | 'Live Match' 
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('Setup');
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const { tournamentDetails, matches, isLoading } = useTournament();
 
   const TABS: Tab[] = ['Setup', 'Players', 'Teams', 'Groups', 'Fixtures', 'Live Match', 'Leaderboard'];
@@ -41,10 +43,12 @@ const App: React.FC = () => {
       case 'Fixtures':
         return <Fixtures />;
       case 'Live Match':
-        const inProgressMatch = matches.find(m => m.status === 'in-progress');
-        const firstScheduledMatch = matches.find(m => m.status === 'scheduled');
-        const matchToDisplay = inProgressMatch || firstScheduledMatch;
-        return matchToDisplay ? <UmpireView matchId={matchToDisplay.id} /> : <NoMatchesPlaceholder />;
+        if (selectedMatchId) {
+          return <UmpireView matchId={selectedMatchId} onBack={() => setSelectedMatchId(null)} />;
+        }
+        return matches.length > 0 ?
+          <MatchSelector onSelectMatch={setSelectedMatchId} /> :
+          <NoMatchesPlaceholder />;
       case 'Leaderboard':
         return <Leaderboard />;
       default:

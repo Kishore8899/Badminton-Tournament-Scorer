@@ -1,18 +1,19 @@
+
 import React, { useMemo, useState } from 'react';
 import Card from './Card';
 import { useTournament } from '../hooks/useTournament';
-import { LeaderboardEntry, Category } from '../types';
+import { LeaderboardEntry } from '../types';
 
 const Leaderboard: React.FC = () => {
-  const { leaderboardData, tournamentDetails } = useTournament();
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
+  const { leaderboardData, groups } = useTournament();
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
 
   const filteredData = useMemo(() => {
-    if (selectedCategory === 'all') {
+    if (selectedGroupId === 'all') {
       return leaderboardData;
     }
-    return leaderboardData.filter(entry => entry.category === selectedCategory);
-  }, [leaderboardData, selectedCategory]);
+    return leaderboardData.filter(entry => entry.groupId === selectedGroupId);
+  }, [leaderboardData, selectedGroupId]);
 
   const sortedLeaderboard = useMemo(() => {
     return [...filteredData].sort((a, b) => {
@@ -26,27 +27,28 @@ const Leaderboard: React.FC = () => {
   return (
     <Card title="Leaderboard">
       <div className="mb-4">
-        <label htmlFor="category-filter" className="block text-sm font-medium text-brand-light/80 mb-1">
-          Filter by Category
+        <label htmlFor="group-filter" className="block text-sm font-medium text-brand-light/80 mb-1">
+          Filter by Group
         </label>
         <select
-          id="category-filter"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value as Category | 'all')}
+          id="group-filter"
+          value={selectedGroupId}
+          onChange={(e) => setSelectedGroupId(e.target.value)}
           className="w-full md:w-1/3 bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
         >
-          <option value="all">All Categories</option>
-          {tournamentDetails?.categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
+          <option value="all">Overall Leaderboard</option>
+          {groups.map(group => (
+            <option key={group.id} value={group.id}>{group.name}</option>
           ))}
         </select>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[700px] text-sm text-left text-gray-300">
+        <table className="w-full min-w-[800px] text-sm text-left text-gray-300">
           <thead className="text-xs text-gray-400 uppercase bg-brand-dark">
             <tr>
               <th scope="col" className="px-2 py-3 sm:px-6">Rank</th>
               <th scope="col" className="px-2 py-3 sm:px-6">Team</th>
+              <th scope="col" className="px-2 py-3 sm:px-6">Group</th>
               <th scope="col" className="px-2 py-3 sm:px-6">Category</th>
               <th scope="col" className="px-2 py-3 sm:px-6 text-center">Played</th>
               <th scope="col" className="px-2 py-3 sm:px-6 text-center">Wins</th>
@@ -61,6 +63,7 @@ const Leaderboard: React.FC = () => {
               <tr key={entry.teamId} className="bg-brand-secondary border-b border-brand-dark/50 hover:bg-brand-secondary/80">
                 <td className="px-2 py-4 sm:px-6 font-bold text-brand-primary text-center">{index + 1}</td>
                 <td className="px-2 py-4 sm:px-6 font-medium text-brand-light whitespace-nowrap">{entry.teamName}</td>
+                <td className="px-2 py-4 sm:px-6 whitespace-nowrap">{entry.groupName ?? 'N/A'}</td>
                 <td className="px-2 py-4 sm:px-6 whitespace-nowrap">{entry.category}</td>
                 <td className="px-2 py-4 sm:px-6 text-center">{entry.played}</td>
                 <td className="px-2 py-4 sm:px-6 text-center text-green-400 font-semibold">{entry.wins}</td>
@@ -71,8 +74,8 @@ const Leaderboard: React.FC = () => {
               </tr>
             )) : (
                <tr>
-                <td colSpan={9} className="text-center py-8 text-gray-400">
-                  No match data available for the selected category.
+                <td colSpan={10} className="text-center py-8 text-gray-400">
+                  No match data available for the selected group.
                 </td>
               </tr>
             )}

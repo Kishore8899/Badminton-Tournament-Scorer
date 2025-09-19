@@ -18,14 +18,19 @@ const TeamManagement: React.FC = () => {
     return selectedCategory.includes('Doubles');
   }, [selectedCategory]);
 
-  const availablePlayers = useMemo(() => {
-    const teamedPlayerIds = new Set(teams.flatMap(team => team.players.map(p => p.id)));
-    return players.filter(p => !teamedPlayerIds.has(p.id));
-  }, [players, teams]);
-  
-  const availableForPlayer2 = useMemo(() => {
-    return availablePlayers.filter(p => p.id !== player1Id);
-  }, [availablePlayers, player1Id]);
+  const teamedPlayerIds = useMemo(() => {
+    return new Set(teams.flatMap(team => team.players.map(p => p.id)));
+  }, [teams]);
+
+  const player1Options = useMemo(() => {
+    // A player is available for P1 if they are not on a team OR they are the currently selected P1.
+    return players.filter(p => !teamedPlayerIds.has(p.id) || p.id === player1Id);
+  }, [players, teamedPlayerIds, player1Id]);
+
+  const player2Options = useMemo(() => {
+    // A player is available for P2 if they meet P1's criteria AND are not the currently selected P1.
+    return players.filter(p => (!teamedPlayerIds.has(p.id) || p.id === player2Id) && p.id !== player1Id);
+  }, [players, teamedPlayerIds, player1Id, player2Id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,13 +69,11 @@ const TeamManagement: React.FC = () => {
   };
   
   const handleRemove = async (teamId: string) => {
-    if (window.confirm('Are you sure you want to remove this team? This will also remove any associated matches.')) {
-        try {
-            await removeTeam(teamId);
-        } catch (error) {
-            console.error("Failed to remove team", error);
-            alert('Could not remove team. Please try again.');
-        }
+    try {
+        await removeTeam(teamId);
+    } catch (error) {
+        console.error("Failed to remove team", error);
+        alert('Could not remove team. Please try again.');
     }
   }
 
@@ -98,7 +101,7 @@ const TeamManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-brand-light/80 mb-1">{isDoubles ? 'Player 1' : 'Player'}</label>
                   <select value={player1Id} onChange={e => setPlayer1Id(e.target.value)} className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition" required>
                     <option value="">Select player...</option>
-                    {[...availablePlayers, players.find(p => p.id === player1Id)].filter(Boolean).map(p => <option key={p!.id} value={p!.id}>{p!.name}</option>)}
+                    {player1Options.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                 </div>
                 {isDoubles && (
@@ -106,7 +109,7 @@ const TeamManagement: React.FC = () => {
                     <label className="block text-sm font-medium text-brand-light/80 mb-1">Player 2</label>
                     <select value={player2Id} onChange={e => setPlayer2Id(e.target.value)} className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition" required>
                       <option value="">Select player...</option>
-                      {[...availableForPlayer2, players.find(p => p.id === player2Id)].filter(Boolean).map(p => <option key={p!.id} value={p!.id}>{p!.name}</option>)}
+                      {player2Options.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                   </div>
                 )}
