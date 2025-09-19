@@ -17,13 +17,13 @@ const PlayerRegistration: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name && age && contact) {
+    if (name) {
       setIsSubmitting(true);
       const newPlayer: Omit<Player, 'id'> = {
         name,
-        age: parseInt(age, 10),
         dominantHand,
-        contact,
+        ...(age && { age: parseInt(age, 10) }),
+        ...(contact && { contact }),
       };
       try {
         await addPlayer(newPlayer);
@@ -57,8 +57,8 @@ const PlayerRegistration: React.FC = () => {
         <Card title="Register New Player">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input label="Full Name" id="playerName" value={name} onChange={e => setName(e.target.value)} required />
-            <Input label="Age" id="playerAge" type="number" value={age} onChange={e => setAge(e.target.value)} required />
-            <Input label="Contact (Email/Phone)" id="playerContact" value={contact} onChange={e => setContact(e.target.value)} required />
+            <Input label="Age (Optional)" id="playerAge" type="number" value={age} onChange={e => setAge(e.target.value)} />
+            <Input label="Contact (Optional)" id="playerContact" value={contact} onChange={e => setContact(e.target.value)} />
             <div>
               <label className="block text-sm font-medium text-brand-light/80 mb-1">Dominant Hand</label>
               <select 
@@ -70,7 +70,7 @@ const PlayerRegistration: React.FC = () => {
                 <option value={DominantHand.Left}>Left</option>
               </select>
             </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full" disabled={isSubmitting || !name}>
               {isSubmitting ? 'Adding Player...' : (
                 <span className="flex items-center justify-center">
                   <UserPlusIcon className="w-5 h-5 mr-2" /> Add Player
@@ -96,7 +96,7 @@ const PlayerRegistration: React.FC = () => {
                 {players.length > 0 ? players.map(player => (
                   <tr key={player.id} className="bg-brand-secondary border-b border-brand-dark/50 hover:bg-brand-secondary/80">
                     <td className="px-4 py-4 sm:px-6 font-medium text-brand-light whitespace-nowrap">{player.name}</td>
-                    <td className="px-4 py-4 sm:px-6">{player.age}</td>
+                    <td className="px-4 py-4 sm:px-6">{player.age ?? 'N/A'}</td>
                     <td className="px-4 py-4 sm:px-6">{player.dominantHand}</td>
                     <td className="px-4 py-4 sm:px-6">
                       <Button variant="danger" onClick={() => handleRemove(player.id)} className="px-2 py-1">

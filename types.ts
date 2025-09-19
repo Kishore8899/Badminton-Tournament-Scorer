@@ -26,9 +26,9 @@ export interface Tournament {
 export interface Player {
   id: string;
   name: string;
-  age: number;
+  age?: number;
   dominantHand: DominantHand;
-  contact: string;
+  contact?: string;
 }
 
 export interface Team {
