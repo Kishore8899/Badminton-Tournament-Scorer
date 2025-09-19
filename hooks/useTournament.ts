@@ -21,6 +21,7 @@ interface TournamentContextType {
   generateFixtures: () => Promise<void>;
   updateScore: (matchId: string, teamKey: 'teamA' | 'teamB', points: number) => Promise<void>;
   endMatch: (matchId: string, winner: Team) => Promise<void>;
+  resetTournament: () => void;
 }
 
 const TournamentContext = createContext<TournamentContextType | undefined>(undefined);
@@ -129,6 +130,11 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     setMatches(updatedMatches);
   }, []);
 
+  const resetTournament = useCallback(() => {
+    api.resetTournamentData();
+    window.location.reload();
+  }, []);
+
   const leaderboardData = useMemo<LeaderboardEntry[]>(() => {
     const stats: { [key: string]: LeaderboardEntry } = {};
     teams.forEach(team => {
@@ -170,6 +176,7 @@ export const TournamentProvider = ({ children }: { children: ReactNode }) => {
     isLoading, tournamentDetails, players, teams, groups, matches, leaderboardData,
     setTournamentDetails, addPlayer, removePlayer, addTeam, removeTeam, createGroup,
     assignTeamToGroup, autoAssignGroups, generateFixtures, updateScore, endMatch,
+    resetTournament,
   };
 
   return React.createElement(TournamentContext.Provider, { value }, children);

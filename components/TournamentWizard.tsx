@@ -6,7 +6,7 @@ import { useTournament } from '../hooks/useTournament';
 import { Category } from '../types';
 
 const TournamentWizard: React.FC = () => {
-  const { tournamentDetails, setTournamentDetails } = useTournament();
+  const { tournamentDetails, setTournamentDetails, resetTournament } = useTournament();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -53,6 +53,12 @@ const TournamentWizard: React.FC = () => {
       alert('Failed to save settings. Please try again.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleReset = () => {
+    if (window.confirm('Are you sure you want to reset all tournament data? This action cannot be undone.')) {
+      resetTournament();
     }
   };
 
@@ -112,6 +118,16 @@ const TournamentWizard: React.FC = () => {
             </Button>
           )}
         </div>
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-brand-dark/50">
+          <h3 className="text-lg font-semibold text-red-500">Danger Zone</h3>
+          <p className="text-sm text-gray-400 mt-1 mb-4">
+            Resetting the tournament will permanently delete all players, teams, groups, and match data.
+          </p>
+          <Button variant="danger" onClick={handleReset}>
+            Reset Tournament
+          </Button>
       </div>
     </Card>
   );
