@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from 'react';
 import Card from './Card';
 import { useTournament } from '../hooks/useTournament';
@@ -27,14 +26,14 @@ const Leaderboard: React.FC = () => {
   return (
     <Card title="Leaderboard">
       <div className="mb-4">
-        <label htmlFor="group-filter" className="block text-sm font-medium text-brand-light/80 mb-1">
+        <label htmlFor="group-filter" className="block text-sm font-medium text-subtle-text mb-1">
           Filter by Group
         </label>
         <select
           id="group-filter"
           value={selectedGroupId}
           onChange={(e) => setSelectedGroupId(e.target.value)}
-          className="w-full md:w-1/3 bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
+          className="w-full md:w-1/3 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition"
         >
           <option value="all">Overall Leaderboard</option>
           {groups.map(group => (
@@ -43,8 +42,8 @@ const Leaderboard: React.FC = () => {
         </select>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[800px] text-sm text-left text-gray-300">
-          <thead className="text-xs text-gray-400 uppercase bg-brand-dark">
+        <table className="w-full min-w-[800px] text-sm text-left text-subtle-text">
+          <thead className="text-xs text-gray-400 uppercase bg-gray-900">
             <tr>
               <th scope="col" className="px-2 py-3 sm:px-6">Rank</th>
               <th scope="col" className="px-2 py-3 sm:px-6">Team</th>
@@ -60,9 +59,9 @@ const Leaderboard: React.FC = () => {
           </thead>
           <tbody>
             {sortedLeaderboard.length > 0 ? sortedLeaderboard.map((entry: LeaderboardEntry, index: number) => (
-              <tr key={entry.teamId} className="bg-brand-secondary border-b border-brand-dark/50 hover:bg-brand-secondary/80">
-                <td className="px-2 py-4 sm:px-6 font-bold text-brand-primary text-center">{index + 1}</td>
-                <td className="px-2 py-4 sm:px-6 font-medium text-brand-light whitespace-nowrap">{entry.teamName}</td>
+              <tr key={entry.teamId} className="border-b border-gray-800 hover:bg-gray-800/50">
+                <td className="px-2 py-4 sm:px-6 font-bold text-accent text-center">{index + 1}</td>
+                <td className="px-2 py-4 sm:px-6 font-medium text-text whitespace-nowrap">{entry.teamName}</td>
                 <td className="px-2 py-4 sm:px-6 whitespace-nowrap">{entry.groupName ?? 'N/A'}</td>
                 <td className="px-2 py-4 sm:px-6 whitespace-nowrap">{entry.category}</td>
                 <td className="px-2 py-4 sm:px-6 text-center">{entry.played}</td>
@@ -74,7 +73,7 @@ const Leaderboard: React.FC = () => {
               </tr>
             )) : (
                <tr>
-                <td colSpan={10} className="text-center py-8 text-gray-400">
+                <td colSpan={10} className="text-center py-8 text-subtle-text">
                   No match data available for the selected group.
                 </td>
               </tr>

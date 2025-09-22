@@ -8,7 +8,7 @@ interface TabsProps<T extends string> {
 
 const Tabs = <T extends string,>({ tabs, activeTab, onTabClick }: TabsProps<T>) => {
   return (
-    <div className="border-b border-brand-secondary">
+    <div className="border-b border-secondary">
       <nav className="-mb-px flex space-x-2 sm:space-x-4 overflow-x-auto" aria-label="Tabs">
         {tabs.map((tab) => (
           <button
@@ -16,8 +16,8 @@ const Tabs = <T extends string,>({ tabs, activeTab, onTabClick }: TabsProps<T>) 
             onClick={() => onTabClick(tab)}
             className={`${
               activeTab === tab
-                ? 'border-brand-primary text-brand-primary'
-                : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-subtle-text hover:text-text hover:border-gray-700'
             } whitespace-nowrap py-3 px-3 sm:py-4 sm:px-4 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none`}
           >
             {tab}

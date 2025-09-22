@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Tabs from './components/Tabs';
@@ -11,20 +10,21 @@ import UmpireView, { MatchSelector } from './components/UmpireView';
 import Leaderboard from './components/Leaderboard';
 import { useTournament } from './hooks/useTournament';
 import { ShuttlecockIcon } from './components/icons/ShuttlecockIcon';
+import ExportData from './components/ExportData';
 
-type Tab = 'Setup' | 'Players' | 'Teams' | 'Groups' | 'Fixtures' | 'Live Match' | 'Leaderboard';
+type Tab = 'Setup' | 'Players' | 'Teams' | 'Groups' | 'Fixtures' | 'Export' | 'Live Match' | 'Leaderboard';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('Setup');
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const { tournamentDetails, matches, isLoading } = useTournament();
 
-  const TABS: Tab[] = ['Setup', 'Players', 'Teams', 'Groups', 'Fixtures', 'Live Match', 'Leaderboard'];
+  const TABS: Tab[] = ['Setup', 'Players', 'Teams', 'Groups', 'Fixtures', 'Live Match', 'Leaderboard', 'Export'];
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-brand-dark flex flex-col items-center justify-center text-center p-4">
-        <ShuttlecockIcon className="w-20 h-20 text-brand-primary animate-bounce" />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center p-4">
+        <ShuttlecockIcon className="w-20 h-20 text-primary animate-bounce" />
         <h1 className="text-2xl font-bold mt-4">Loading Tournament...</h1>
       </div>
     );
@@ -42,6 +42,8 @@ const App: React.FC = () => {
         return <GroupDivision />;
       case 'Fixtures':
         return <Fixtures />;
+      case 'Export':
+        return <ExportData />;
       case 'Live Match':
         if (selectedMatchId) {
           return <UmpireView matchId={selectedMatchId} onBack={() => setSelectedMatchId(null)} />;
@@ -57,17 +59,17 @@ const App: React.FC = () => {
   };
   
   const NoMatchesPlaceholder: React.FC = () => (
-    <div className="flex flex-col items-center justify-center text-center p-4 sm:p-8 bg-brand-secondary rounded-lg h-96">
-        <ShuttlecockIcon className="w-16 h-16 text-brand-primary mb-4" />
+    <div className="flex flex-col items-center justify-center text-center p-4 sm:p-8 bg-secondary rounded-lg h-96">
+        <ShuttlecockIcon className="w-16 h-16 text-primary mb-4" />
         <h2 className="text-2xl font-bold mb-2">No Matches Available</h2>
-        <p className="text-brand-light/70">
+        <p className="text-subtle-text">
             Generate fixtures in the 'Fixtures' tab to start a match.
         </p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-brand-dark font-sans">
+    <div className="min-h-screen bg-background font-sans">
       <Header title={tournamentDetails?.name || "Badminton Manager"} />
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
         <Tabs<Tab>

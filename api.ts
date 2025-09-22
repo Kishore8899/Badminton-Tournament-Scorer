@@ -15,7 +15,7 @@ interface AppData {
 
 const initialTournament: Tournament = {
   id: 't1',
-  name: "Ki Badminton Tournament Scorer",
+  name: "Ki Badminton Tournament",
   startDate: new Date().toISOString().split('T')[0],
   endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   categories: [Category.MensSingles, Category.MensDoubles, Category.MixedDoubles],

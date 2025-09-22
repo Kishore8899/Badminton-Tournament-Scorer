@@ -37,14 +37,14 @@ export const MatchSelector: React.FC<MatchSelectorProps> = ({ onSelectMatch }) =
   return (
     <Card title="Select a Match to Score">
       <div className="mb-4">
-        <label htmlFor="group-filter" className="block text-sm font-medium text-brand-light/80 mb-1">
+        <label htmlFor="group-filter" className="block text-sm font-medium text-subtle-text mb-1">
           Filter by Group
         </label>
         <select
           id="group-filter"
           value={selectedGroupId}
           onChange={(e) => setSelectedGroupId(e.target.value)}
-          className="w-full md:w-1/3 bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
+          className="w-full md:w-1/3 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition"
         >
           <option value="all">All Groups</option>
           {groups.map(group => (
@@ -54,20 +54,20 @@ export const MatchSelector: React.FC<MatchSelectorProps> = ({ onSelectMatch }) =
       </div>
       <div className="space-y-4 max-h-[60vh] overflow-auto">
         {filteredMatches.map((match: Match) => (
-          <div key={match.id} className="bg-brand-dark p-4 rounded-lg flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <div key={match.id} className="bg-gray-900 p-4 rounded-lg flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <div className="flex items-center flex-grow min-w-[250px]">
               <div className="flex-1 text-right truncate">
-                <span className="font-semibold text-brand-light">{match.teamA.name}</span>
+                <span className="font-semibold text-text">{match.teamA.name}</span>
               </div>
-              <div className="text-center text-gray-400 font-bold mx-2 sm:mx-4">vs</div>
+              <div className="text-center text-subtle-text font-bold mx-2 sm:mx-4">vs</div>
               <div className="flex-1 text-left truncate">
-                 <span className="font-semibold text-brand-light">{match.teamB.name}</span>
+                 <span className="font-semibold text-text">{match.teamB.name}</span>
               </div>
             </div>
             <div className="flex items-center gap-4">
                 <div className={`text-xs text-center font-medium w-28 capitalize px-2 py-1 rounded-full ${
-                      match.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                      match.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-400' :
+                      match.status === 'completed' ? 'bg-green-500/20 text-green-300' :
+                      match.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-300' :
                       'bg-gray-500/20 text-gray-400'
                   }`}>
                   {match.status}
@@ -79,7 +79,7 @@ export const MatchSelector: React.FC<MatchSelectorProps> = ({ onSelectMatch }) =
           </div>
         ))}
         {filteredMatches.length === 0 && (
-            <p className="text-center py-8 text-gray-400">No matches found for the selected group.</p>
+            <p className="text-center py-8 text-subtle-text">No matches found for the selected group.</p>
         )}
       </div>
     </Card>
@@ -150,7 +150,7 @@ const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
       </div>
 
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-brand-primary">{teamA.name} vs {teamB.name}</h3>
+        <h3 className="text-2xl font-bold text-primary">{teamA.name} vs {teamB.name}</h3>
         {isCompleted && winner ? (
              <p className="text-lg font-bold text-green-400 mt-2">{winner.name} won the match!</p>
         ) : (
@@ -163,13 +163,13 @@ const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
         <div>
           <h4 className="text-xl md:text-2xl font-semibold mb-4 truncate">{teamA.name}</h4>
           {isCompleted ? (
-            <div className="text-6xl md:text-8xl font-bold text-brand-light p-4">{score.teamA}</div>
+            <div className="text-6xl md:text-8xl font-bold text-text p-4">{score.teamA}</div>
           ) : (
             <input 
               type="number"
               value={score.teamA}
               onChange={e => handleScoreChange('teamA', e.target.value)}
-              className="w-full text-6xl md:text-8xl font-bold text-brand-light mb-6 p-4 bg-brand-dark rounded-lg text-center"
+              className="w-full text-6xl md:text-8xl font-bold text-text mb-6 p-4 bg-gray-900 rounded-lg text-center"
             />
           )}
           {!isCompleted && (
@@ -184,13 +184,13 @@ const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
         <div>
           <h4 className="text-xl md:text-2xl font-semibold mb-4 truncate">{teamB.name}</h4>
            {isCompleted ? (
-            <div className="text-6xl md:text-8xl font-bold text-brand-light p-4">{score.teamB}</div>
+            <div className="text-6xl md:text-8xl font-bold text-text p-4">{score.teamB}</div>
           ) : (
             <input 
               type="number"
               value={score.teamB}
               onChange={e => handleScoreChange('teamB', e.target.value)}
-              className="w-full text-6xl md:text-8xl font-bold text-brand-light mb-6 p-4 bg-brand-dark rounded-lg text-center"
+              className="w-full text-6xl md:text-8xl font-bold text-text mb-6 p-4 bg-gray-900 rounded-lg text-center"
             />
           )}
            {!isCompleted && (
@@ -212,7 +212,7 @@ const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
                   {isEnding ? 'Ending...' : 'Confirm Winner & End Match'}
               </Button>
           ) : (
-              <p className="text-gray-400">First to {pointsToWin} points wins the game.</p>
+              <p className="text-subtle-text">First to {pointsToWin} points wins the game.</p>
           )}
       </div>
     </Card>

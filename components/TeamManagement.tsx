@@ -83,11 +83,11 @@ const TeamManagement: React.FC = () => {
         <Card title="Create New Team">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-brand-light/80 mb-1">Category</label>
+              <label className="block text-sm font-medium text-subtle-text mb-1">Category</label>
               <select 
                 value={selectedCategory} 
                 onChange={e => { setSelectedCategory(e.target.value as Category); setPlayer1Id(''); setPlayer2Id(''); }}
-                className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition"
                 required
               >
                 <option value="">Select a category</option>
@@ -98,16 +98,16 @@ const TeamManagement: React.FC = () => {
             {selectedCategory && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-brand-light/80 mb-1">{isDoubles ? 'Player 1' : 'Player'}</label>
-                  <select value={player1Id} onChange={e => setPlayer1Id(e.target.value)} className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition" required>
+                  <label className="block text-sm font-medium text-subtle-text mb-1">{isDoubles ? 'Player 1' : 'Player'}</label>
+                  <select value={player1Id} onChange={e => setPlayer1Id(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition" required>
                     <option value="">Select player...</option>
                     {player1Options.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                 </div>
                 {isDoubles && (
                   <div>
-                    <label className="block text-sm font-medium text-brand-light/80 mb-1">Player 2</label>
-                    <select value={player2Id} onChange={e => setPlayer2Id(e.target.value)} className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition" required>
+                    <label className="block text-sm font-medium text-subtle-text mb-1">Player 2</label>
+                    <select value={player2Id} onChange={e => setPlayer2Id(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition" required>
                       <option value="">Select player...</option>
                       {player2Options.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
@@ -128,8 +128,8 @@ const TeamManagement: React.FC = () => {
       <div className="lg:col-span-2">
         <Card title={`Created Teams (${teams.length})`}>
           <div className="max-h-96 overflow-auto">
-            <table className="w-full min-w-[400px] text-sm text-left text-gray-300">
-              <thead className="text-xs text-gray-400 uppercase bg-brand-dark sticky top-0">
+            <table className="w-full min-w-[400px] text-sm text-left text-subtle-text">
+              <thead className="text-xs text-gray-400 uppercase bg-gray-900 sticky top-0">
                 <tr>
                   <th scope="col" className="px-4 py-3 sm:px-6">Team Name</th>
                   <th scope="col" className="px-4 py-3 sm:px-6">Category</th>
@@ -138,8 +138,8 @@ const TeamManagement: React.FC = () => {
               </thead>
               <tbody>
                 {teams.length > 0 ? teams.map(team => (
-                  <tr key={team.id} className="bg-brand-secondary border-b border-brand-dark/50 hover:bg-brand-secondary/80">
-                    <td className="px-4 py-4 sm:px-6 font-medium text-brand-light whitespace-nowrap">{team.name}</td>
+                  <tr key={team.id} className="border-b border-gray-800 hover:bg-gray-800/50">
+                    <td className="px-4 py-4 sm:px-6 font-medium text-text whitespace-nowrap">{team.name}</td>
                     <td className="px-4 py-4 sm:px-6">{team.category}</td>
                     <td className="px-4 py-4 sm:px-6">
                       <Button variant="danger" onClick={() => handleRemove(team.id)} className="px-2 py-1">
@@ -149,7 +149,7 @@ const TeamManagement: React.FC = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={3} className="text-center py-8 text-gray-400">No teams created yet.</td>
+                    <td colSpan={3} className="text-center py-8 text-subtle-text">No teams created yet.</td>
                   </tr>
                 )}
               </tbody>

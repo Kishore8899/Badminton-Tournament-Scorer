@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Card from './Card';
 import Button from './Button';
@@ -61,11 +60,11 @@ const PlayerRegistration: React.FC = () => {
             <Input label="Age (Optional)" id="playerAge" type="number" value={age} onChange={e => setAge(e.target.value)} />
             <Input label="Contact (Optional)" id="playerContact" value={contact} onChange={e => setContact(e.target.value)} />
             <div>
-              <label className="block text-sm font-medium text-brand-light/80 mb-1">Dominant Hand (Optional)</label>
+              <label className="block text-sm font-medium text-subtle-text mb-1">Dominant Hand (Optional)</label>
               <select 
                 value={dominantHand} 
                 onChange={e => setDominantHand(e.target.value as DominantHand)}
-                className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
+                className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition"
               >
                 <option value="">Select Hand</option>
                 <option value={DominantHand.Right}>Right</option>
@@ -85,8 +84,8 @@ const PlayerRegistration: React.FC = () => {
       <div className="lg:col-span-2">
         <Card title={`Registered Players (${players.length})`}>
           <div className="max-h-96 overflow-auto">
-            <table className="w-full min-w-[400px] text-sm text-left text-gray-300">
-              <thead className="text-xs text-gray-400 uppercase bg-brand-dark sticky top-0">
+            <table className="w-full min-w-[400px] text-sm text-left text-subtle-text">
+              <thead className="text-xs text-gray-400 uppercase bg-gray-900 sticky top-0">
                 <tr>
                   <th scope="col" className="px-4 py-3 sm:px-6">Name</th>
                   <th scope="col" className="px-4 py-3 sm:px-6">Age</th>
@@ -96,8 +95,8 @@ const PlayerRegistration: React.FC = () => {
               </thead>
               <tbody>
                 {players.length > 0 ? players.map(player => (
-                  <tr key={player.id} className="bg-brand-secondary border-b border-brand-dark/50 hover:bg-brand-secondary/80">
-                    <td className="px-4 py-4 sm:px-6 font-medium text-brand-light whitespace-nowrap">{player.name}</td>
+                  <tr key={player.id} className="border-b border-gray-800 hover:bg-gray-800/50">
+                    <td className="px-4 py-4 sm:px-6 font-medium text-text whitespace-nowrap">{player.name}</td>
                     <td className="px-4 py-4 sm:px-6">{player.age ?? 'N/A'}</td>
                     <td className="px-4 py-4 sm:px-6">{player.dominantHand ?? 'N/A'}</td>
                     <td className="px-4 py-4 sm:px-6">
@@ -108,7 +107,7 @@ const PlayerRegistration: React.FC = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan={4} className="text-center py-8 text-gray-400">No players registered yet.</td>
+                    <td colSpan={4} className="text-center py-8 text-subtle-text">No players registered yet.</td>
                   </tr>
                 )}
               </tbody>

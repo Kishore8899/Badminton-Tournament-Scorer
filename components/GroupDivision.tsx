@@ -45,10 +45,10 @@ const GroupDivision: React.FC = () => {
       <Card title="Ungrouped Teams">
         <div className="flex flex-wrap gap-2">
           {ungroupedTeams.length > 0 ? ungroupedTeams.map(team => (
-            <div key={team.id} className="bg-brand-dark px-3 py-1 rounded-full text-sm font-medium text-brand-light">
+            <div key={team.id} className="bg-gray-900 px-3 py-1 rounded-full text-sm font-medium text-text">
               {team.name}
             </div>
-          )) : <p className="text-gray-400">All teams have been assigned to a group.</p>}
+          )) : <p className="text-subtle-text">All teams have been assigned to a group.</p>}
         </div>
       </Card>
       
@@ -77,20 +77,20 @@ const GroupDivision: React.FC = () => {
           >
             <div className="space-y-3 min-h-[100px]">
               {group.teams.map(team => (
-                <div key={team.id} className="flex justify-between items-center bg-brand-dark p-2 rounded-md">
-                  <span className="text-brand-light font-semibold">{team.name}</span>
+                <div key={team.id} className="flex justify-between items-center bg-gray-900 p-2 rounded-md">
+                  <span className="text-text font-semibold">{team.name}</span>
                   <button onClick={() => unassignTeamFromGroup(team.id)} className="text-gray-500 hover:text-red-400 transition-colors">
                     <XCircleIcon className="w-5 h-5" />
                   </button>
                 </div>
               ))}
-               {group.teams.length === 0 && <p className="text-center text-gray-500 pt-4">This group is empty.</p>}
+               {group.teams.length === 0 && <p className="text-center text-subtle-text pt-4">This group is empty.</p>}
               {ungroupedTeams.length > 0 && (
                 <div className="pt-2">
                   <select 
                     value=""
                     onChange={e => handleAssign(e.target.value, group.id)}
-                    className="w-full bg-brand-dark border border-brand-secondary rounded-md px-3 py-2 text-brand-light focus:ring-brand-primary focus:border-brand-primary transition"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-text focus:ring-1 focus:ring-primary focus:border-primary transition"
                   >
                     <option value="" disabled>Assign a team...</option>
                     {ungroupedTeams.map(team => (

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,11 +7,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', className = '', ...props }) => {
-  const baseClasses = 'px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-dark disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantClasses = {
-    primary: 'bg-brand-primary text-brand-dark hover:bg-brand-primary/90 focus:ring-brand-primary',
-    secondary: 'bg-brand-light/10 text-brand-light hover:bg-brand-light/20 focus:ring-brand-primary',
+    primary: 'bg-gradient-to-r from-primary to-indigo-500 text-white hover:opacity-90 focus:ring-primary',
+    secondary: 'bg-secondary hover:bg-gray-800 border border-gray-700 text-subtle-text hover:text-text focus:ring-primary',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
 

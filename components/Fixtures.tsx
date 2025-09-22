@@ -27,7 +27,7 @@ const Fixtures: React.FC = () => {
     <Card title="Match Fixtures">
       {matches.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-400 mb-4">
+          <p className="text-subtle-text mb-4">
             {canGenerate ? 'Fixtures have not been generated yet.' : 'Please create groups with at least 2 teams to generate fixtures.'}
           </p>
           <Button onClick={handleGenerate} disabled={isGenerating || !canGenerate}>
@@ -40,20 +40,20 @@ const Fixtures: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {matches.map((match: Match, index: number) => (
-            <div key={match.id} className="bg-brand-dark p-4 rounded-lg flex flex-wrap items-center justify-between gap-x-4 gap-y-2 transition-all hover:shadow-lg">
+            <div key={match.id} className="bg-gray-900 p-4 rounded-lg flex flex-wrap items-center justify-between gap-x-4 gap-y-2 transition-all hover:bg-gray-800">
               <div className="flex items-center flex-grow min-w-[250px]">
-                <span className="text-brand-primary font-bold mr-4">M{index + 1}</span>
+                <span className="text-primary font-bold mr-4">M{index + 1}</span>
                 <div className="flex-1 text-right truncate">
-                  <span className="font-semibold text-brand-light">{match.teamA.name}</span>
+                  <span className="font-semibold text-text">{match.teamA.name}</span>
                 </div>
-                <div className="text-center text-gray-400 font-bold mx-2 sm:mx-4">vs</div>
+                <div className="text-center text-subtle-text font-bold mx-2 sm:mx-4">vs</div>
                 <div className="flex-1 text-left truncate">
-                   <span className="font-semibold text-brand-light">{match.teamB.name}</span>
+                   <span className="font-semibold text-text">{match.teamB.name}</span>
                 </div>
               </div>
               <div className={`text-xs text-center font-medium w-28 capitalize px-2 py-1 rounded-full ${
-                    match.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                    match.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-400' :
+                    match.status === 'completed' ? 'bg-green-500/20 text-green-300' :
+                    match.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-300' :
                     'bg-gray-500/20 text-gray-400'
                 }`}>
                 {match.status}
