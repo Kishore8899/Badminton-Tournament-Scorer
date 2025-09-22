@@ -3,6 +3,7 @@ import Card from './Card';
 import Button from './Button';
 import { useTournament } from '../hooks/useTournament';
 import { Group, Match } from '../types';
+import { useConfirm } from '../hooks/useConfirm';
 
 // --- New Component for Selecting a Match ---
 
@@ -102,6 +103,7 @@ const ScoreButton: React.FC<{ onClick: () => void; children: React.ReactNode; cl
 
 const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
   const { matches, setScore, endMatch, reopenMatch, tournamentDetails } = useTournament();
+  const confirm = useConfirm();
   const match = matches.find(m => m.id === matchId);
   const [isEnding, setIsEnding] = useState(false);
 
@@ -114,7 +116,13 @@ const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
 
   const handleEndMatch = async () => {
     if (score.teamA === score.teamB) {
-        alert("Cannot end match with a tie score.");
+        await confirm({
+          title: 'Cannot End Match',
+          message: 'A match cannot be ended with a tie score.',
+          confirmText: 'OK',
+          cancelText: null,
+          confirmVariant: 'secondary'
+        });
         return;
     }
     setIsEnding(true);
@@ -123,7 +131,13 @@ const UmpireView: React.FC<UmpireViewProps> = ({ matchId, onBack }) => {
         await endMatch(matchId, newWinner);
     } catch(error) {
         console.error("Failed to end match", error);
-        alert("Failed to end match. Please try again.");
+        await confirm({ 
+          title: 'Error', 
+          message: 'Failed to end match. Please try again.', 
+          confirmText: 'OK', 
+          cancelText: null, 
+          confirmVariant: 'danger' 
+        });
     } finally {
         setIsEnding(false);
     }

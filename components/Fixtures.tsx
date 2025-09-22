@@ -4,9 +4,11 @@ import Button from './Button';
 import { useTournament } from '../hooks/useTournament';
 import { Match } from '../types';
 import { CalendarIcon } from './icons/CalendarIcon';
+import { useConfirm } from '../hooks/useConfirm';
 
 const Fixtures: React.FC = () => {
   const { matches, generateFixtures, groups } = useTournament();
+  const confirm = useConfirm();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const canGenerate = groups.length > 0 && groups.some(g => g.teams.length > 1);
@@ -17,7 +19,13 @@ const Fixtures: React.FC = () => {
         await generateFixtures();
     } catch (error) {
         console.error("Failed to generate fixtures", error);
-        alert('Could not generate fixtures. Please try again.');
+        await confirm({ 
+          title: 'Error', 
+          message: 'Could not generate fixtures. Please try again.', 
+          confirmText: 'OK', 
+          cancelText: null, 
+          confirmVariant: 'danger' 
+        });
     } finally {
         setIsGenerating(false);
     }

@@ -4,6 +4,7 @@ import Button from './Button';
 import Input from './Input';
 import { useTournament } from '../hooks/useTournament';
 import { Category } from '../types';
+import { useConfirm } from '../hooks/useConfirm';
 
 const TournamentWizard: React.FC = () => {
   const { 
@@ -11,6 +12,7 @@ const TournamentWizard: React.FC = () => {
     setTournamentDetails, 
     resetTournament 
   } = useTournament();
+  const confirm = useConfirm();
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -51,18 +53,45 @@ const TournamentWizard: React.FC = () => {
         categories,
         scoringRules: { pointsPerGame }
       });
-      alert('Tournament details saved!');
+      await confirm({
+        title: 'Success',
+        message: 'Tournament details have been saved!',
+        confirmText: 'OK',
+        cancelText: null
+      });
     } catch (error) {
       console.error("Failed to save tournament details", error);
-      alert('Failed to save settings. Please try again.');
+      await confirm({
+        title: 'Save Failed',
+        message: 'Could not save your settings. Please try again.',
+        confirmText: 'OK',
+        cancelText: null,
+        confirmVariant: 'danger'
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset all tournament data? This action cannot be undone.')) {
+  const handleReset = async () => {
+    const shouldReset = await confirm({
+      title: 'Confirm Reset',
+      message: 'Are you sure you want to reset all tournament data? This action cannot be undone.',
+      confirmText: 'Reset',
+      confirmVariant: 'danger'
+    });
+    if (shouldReset) {
       resetTournament();
+    }
+  };
+
+  const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    // Enforce reasonable limits (e.g., 1-99)
+    if (!isNaN(value) && value > 0 && value < 100) {
+      setPointsPerGame(value);
+    } else if (e.target.value === '') {
+      setPointsPerGame(1); // Or some default, to avoid NaN state
     }
   };
 
@@ -105,7 +134,16 @@ const TournamentWizard: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-primary">Step 3: Scoring Rules</h3>
             <div className="max-w-xs">
-               <Input label="Points per Game" id="pointsPerGame" type="number" value={pointsPerGame} onChange={e => setPointsPerGame(parseInt(e.target.value, 10))} />
+               <Input 
+                 label="Points per Game" 
+                 id="pointsPerGame" 
+                 type="number" 
+                 value={pointsPerGame} 
+                 onChange={handlePointsChange}
+                 min="1"
+                 max="99"
+               />
+               <p className="text-xs text-subtle-text mt-1">Must be between 1 and 99.</p>
             </div>
           </div>
         )}

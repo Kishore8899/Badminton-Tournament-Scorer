@@ -6,9 +6,11 @@ import { useTournament } from '../hooks/useTournament';
 import { Player, DominantHand } from '../types';
 import { UserPlusIcon } from './icons/UserPlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
+import { useConfirm } from '../hooks/useConfirm';
 
 const PlayerRegistration: React.FC = () => {
   const { players, addPlayer, removePlayer } = useTournament();
+  const confirm = useConfirm();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [dominantHand, setDominantHand] = useState<DominantHand | ''>('');
@@ -33,7 +35,13 @@ const PlayerRegistration: React.FC = () => {
         setContact('');
       } catch (error) {
         console.error("Failed to add player", error);
-        alert('Could not add player. Please try again.');
+        await confirm({ 
+          title: 'Error', 
+          message: 'Could not add player. Please try again.', 
+          confirmText: 'OK', 
+          cancelText: null, 
+          confirmVariant: 'danger' 
+        });
       } finally {
         setIsSubmitting(false);
       }
@@ -41,12 +49,24 @@ const PlayerRegistration: React.FC = () => {
   };
 
   const handleRemove = async (playerId: string) => {
-    if (window.confirm('Are you sure you want to remove this player? This will also remove any team they are on and any associated matches.')) {
+    const shouldRemove = await confirm({
+      title: 'Confirm Removal',
+      message: 'Are you sure you want to remove this player? This will also remove any team they are on and any associated matches.',
+      confirmText: 'Remove',
+      confirmVariant: 'danger'
+    });
+    if (shouldRemove) {
         try {
             await removePlayer(playerId);
         } catch (error) {
             console.error("Failed to remove player", error);
-            alert('Could not remove player. Please try again.');
+            await confirm({ 
+              title: 'Error', 
+              message: 'Could not remove player. Please try again.', 
+              confirmText: 'OK', 
+              cancelText: null, 
+              confirmVariant: 'danger' 
+            });
         }
     }
   }

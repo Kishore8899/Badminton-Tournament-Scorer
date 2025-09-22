@@ -1,8 +1,8 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { TournamentProvider } from './hooks/useTournament';
+import { ConfirmDialogProvider } from './hooks/useConfirm';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -13,7 +13,9 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <TournamentProvider>
-      <App />
+      <ConfirmDialogProvider>
+        <App />
+      </ConfirmDialogProvider>
     </TournamentProvider>
   </React.StrictMode>
 );

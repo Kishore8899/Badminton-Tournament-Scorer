@@ -5,9 +5,11 @@ import { useTournament } from '../hooks/useTournament';
 import { Team } from '../types';
 import { TrashIcon } from './icons/TrashIcon';
 import { XCircleIcon } from './icons/XCircleIcon';
+import { useConfirm } from '../hooks/useConfirm';
 
 const GroupDivision: React.FC = () => {
   const { teams, groups, assignTeamToGroup, createGroup, autoAssignGroups, removeGroup, unassignTeamFromGroup } = useTournament();
+  const confirm = useConfirm();
   const [isAutoAssigning, setIsAutoAssigning] = useState(false);
   const [isAddingGroup, setIsAddingGroup] = useState(false);
 
@@ -34,8 +36,14 @@ const GroupDivision: React.FC = () => {
     setIsAddingGroup(false);
   }
 
-  const handleRemoveGroup = (groupId: string) => {
-    if (window.confirm('Are you sure you want to delete this group? All teams within it will become ungrouped.')) {
+  const handleRemoveGroup = async (groupId: string) => {
+    const shouldRemove = await confirm({
+      title: 'Confirm Delete',
+      message: 'Are you sure you want to delete this group? All teams within it will become ungrouped.',
+      confirmText: 'Delete',
+      confirmVariant: 'danger'
+    });
+    if (shouldRemove) {
         removeGroup(groupId);
     }
   }

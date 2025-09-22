@@ -18,6 +18,15 @@
               'text': '#F9FAFB', // Near White
               'subtle-text': '#9CA3AF', // Medium Gray
             },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: 0 },
+                '100%': { opacity: 1 },
+              },
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.2s ease-out',
+            },
           },
         },
       }
@@ -27,6 +36,7 @@
   "imports": {
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
     "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.1.1",
     "react": "https://aistudiocdn.com/react@^19.1.1"
   }
 }

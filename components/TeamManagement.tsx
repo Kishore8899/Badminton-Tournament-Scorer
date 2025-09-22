@@ -5,9 +5,11 @@ import { useTournament } from '../hooks/useTournament';
 import { Category, Player, Team } from '../types';
 import { UsersIcon } from './icons/UsersIcon';
 import { TrashIcon } from './icons/TrashIcon';
+import { useConfirm } from '../hooks/useConfirm';
 
 const TeamManagement: React.FC = () => {
   const { players, teams, addTeam, removeTeam, tournamentDetails } = useTournament();
+  const confirm = useConfirm();
   const [selectedCategory, setSelectedCategory] = useState<Category | ''>(tournamentDetails?.categories[0] || '');
   const [player1Id, setPlayer1Id] = useState<string>('');
   const [player2Id, setPlayer2Id] = useState<string>('');
@@ -62,18 +64,38 @@ const TeamManagement: React.FC = () => {
       setPlayer2Id('');
     } catch (error) {
       console.error("Failed to add team", error);
-      alert('Could not add team. Please try again.');
+      await confirm({ 
+        title: 'Error', 
+        message: 'Could not add team. Please try again.', 
+        confirmText: 'OK', 
+        cancelText: null, 
+        confirmVariant: 'danger' 
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
   
   const handleRemove = async (teamId: string) => {
-    try {
-        await removeTeam(teamId);
-    } catch (error) {
-        console.error("Failed to remove team", error);
-        alert('Could not remove team. Please try again.');
+    const shouldRemove = await confirm({
+        title: 'Confirm Removal',
+        message: 'Are you sure you want to remove this team? Any matches they are in will also be deleted.',
+        confirmText: 'Remove',
+        confirmVariant: 'danger'
+    });
+    if (shouldRemove) {
+        try {
+            await removeTeam(teamId);
+        } catch (error) {
+            console.error("Failed to remove team", error);
+            await confirm({ 
+              title: 'Error', 
+              message: 'Could not remove team. Please try again.', 
+              confirmText: 'OK', 
+              cancelText: null, 
+              confirmVariant: 'danger' 
+            });
+        }
     }
   }
 
